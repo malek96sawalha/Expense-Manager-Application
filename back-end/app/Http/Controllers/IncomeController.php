@@ -23,16 +23,22 @@ class IncomeController extends Controller
             $request->validate([
                 'userId' => 'required|exists:users,id',
                 'sourcename' => 'required|string',
+                'userId' => 'required|exists:users,id',
+                'sourcename' => 'required|string',
                 'amount' => 'required|numeric',
                 'frequency' => 'required|string',
             ]);
 
+
             $income = Income::create([
+                'userId' => $request->userId,
+                'sourcename' => $request->sourcename,
                 'userId' => $request->userId,
                 'sourcename' => $request->sourcename,
                 'amount' => $request->amount,
                 'frequency' => $request->frequency,
             ]);
+
 
             // If you need to return something after successful creation
             return response()->json(['message' => 'Income record created successfully'], 201);
@@ -42,6 +48,7 @@ class IncomeController extends Controller
         }
     }
 
+    
 
     /**
      * Display the specified resource.
@@ -54,18 +61,27 @@ class IncomeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Income $income)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'source_name' => 'string',
-            'amount' => 'numeric',
-            'frequency' => 'string',
-        ]);
-
-        $income->update($request->only(['source_name', 'amount', 'frequency']));
-
-        return response()->json(['message' => 'Income updated successfully'], 200);
+        try {
+            $income = Income::findOrFail($id);
+    
+            $request->validate([
+                'userId' => 'numeric',
+                'sourcename' => 'string',
+                'amount' => 'numeric',
+                'frequency' => 'string',
+            ]);
+    
+            $income->update($request->only(['userId','sourcename', 'amount', 'frequency']));
+    
+            return response()->json(['message' => 'Income updated successfully'], 200);
+        } catch (\Exception $e) {
+            // Log the exception or return an error response
+            return response()->json(['error' => 'Failed to update income record: ' . $e->getMessage()], 500);
+        }
     }
+    
 
     /**
      * Remove the specified resource from storage.
