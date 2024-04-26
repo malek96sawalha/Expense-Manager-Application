@@ -119,4 +119,32 @@ class CategorieController extends Controller
             return response()->json(['message' => 'Failed to delete category', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function getByStateAndUserId(Request $request)
+    {
+
+        try {
+            $request->validate([
+                'state' => 'required|in:income,expense',
+                'userId' => 'required|exists:users,id'
+            ]);
+
+            $state = $request->state;
+            $userId = $request->userId;
+            // if (userId !== Auth::id()) {
+            //     return response()->json(['message' => 'Unauthorized'], 401);
+            // }
+
+            $categories = categorie::where('type', $state)
+                ->where('userId', $userId)
+                ->select('id', 'categoryname')
+                ->get();
+
+            return response()->json(['categories' => $categories]);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to retrieve categories', 'error' => $e->getMessage()], 500);
+        }
+    }
 }
