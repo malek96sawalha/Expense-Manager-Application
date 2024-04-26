@@ -11,12 +11,6 @@ use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 
-
-
-
-
-
-
 class CategorieController extends Controller
 {
     /**
@@ -125,7 +119,7 @@ class CategorieController extends Controller
 
         try {
             $request->validate([
-                'state' => 'required|in:income,expense',
+                'state' => 'in:income,expense',
                 'userId' => 'required|exists:users,id'
             ]);
 
@@ -134,11 +128,15 @@ class CategorieController extends Controller
             // if (userId !== Auth::id()) {
             //     return response()->json(['message' => 'Unauthorized'], 401);
             // }
-
-            $categories = categorie::where('type', $state)
-                ->where('userId', $userId)
-                ->select('id', 'categoryname')
+            $categories = categorie::where('userId', $userId)
+                ->select('id', 'categoryname', 'type')
                 ->get();
+            if ($request->state) {
+                $categories = categorie::where('type', $state)
+                    ->where('userId', $userId)
+                    ->select('id', 'categoryname', 'type')
+                    ->get();
+            }
 
             return response()->json(['categories' => $categories]);
         } catch (ValidationException $e) {
