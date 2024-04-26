@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('userId');
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
-            $table->string('category_name');
+            $table->string('categoryname');
             $table->enum('type', ['income', 'expense']);
             $table->timestamps();
         });

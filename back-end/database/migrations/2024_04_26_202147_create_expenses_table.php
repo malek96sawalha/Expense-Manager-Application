@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('userId');
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('categoryId');
-            $table->foreign('categoryId')->references('id')->on('expense_categories')->onDelete('cascade');
+            $table->foreign('categoryId')->references('id')->on('categories')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->string('description')->nullable();
             $table->date('transaction_date');
