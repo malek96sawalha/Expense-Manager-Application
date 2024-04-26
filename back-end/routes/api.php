@@ -23,9 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
- Route::apiResource('incomes', IncomeController::class);
+Route::apiResource('incomes', IncomeController::class);
 
 Route::apiResource('categories', CategorieController::class);
-// Route::get('/categories', [CategorieController::class, 'index']);
+Route::get('category/state-and-user', [CategorieController::class, 'getByStateAndUserId']);
+
 
 Route::apiResource('expense', ExpenseController::class);
