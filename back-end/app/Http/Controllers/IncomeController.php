@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Income;
+
 class IncomeController extends Controller
 {
 
@@ -22,16 +23,22 @@ class IncomeController extends Controller
             $request->validate([
                 'userId' => 'required|exists:users,id',
                 'sourcename' => 'required|string',
+                'userId' => 'required|exists:users,id',
+                'sourcename' => 'required|string',
                 'amount' => 'required|numeric',
                 'frequency' => 'required|string',
             ]);
 
+
             $income = Income::create([
+                'userId' => $request->userId,
+                'sourcename' => $request->sourcename,
                 'userId' => $request->userId,
                 'sourcename' => $request->sourcename,
                 'amount' => $request->amount,
                 'frequency' => $request->frequency,
             ]);
+
 
             // If you need to return something after successful creation
             return response()->json(['message' => 'Income record created successfully'], 201);

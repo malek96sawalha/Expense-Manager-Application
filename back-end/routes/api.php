@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
- Route::apiResource('incomes', IncomeController::class);
+Route::apiResource('incomes', IncomeController::class);
 
 Route::apiResource('categories', CategorieController::class);
 // Route::get('/categories', [CategorieController::class, 'index']);
