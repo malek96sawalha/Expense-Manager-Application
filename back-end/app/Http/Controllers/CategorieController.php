@@ -6,6 +6,14 @@ use App\Models\Categorie;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+
+
+
+
 
 
 
@@ -16,63 +24,99 @@ class CategorieController extends Controller
      */
     public function index()
     {
-        $categories = categorie::all();
-        return response()->json(['categories' => $categories]);
-    }
-
-    public function create()
-    {
-        // Not applicable for API
+        try {
+            $categories = categorie::all();
+            return response()->json(['categories' => $categories]);
+        } catch (QueryException $e) {
+            return response()->json(['message' => 'Failed to retrieve categories', 'error' => $e->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to retrieve categories', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'categoryname' => 'required|unique:categories',
-            'type' => 'required|in:income,expense',
-        ]);
-        $user = Auth::user();
-        $category = categorie::create([
-            // 'userId' => $user->id,
-            'userId' => $request->userId,
-            'categoryname' => $request->categoryname,
-            'type' => $request->type,
-        ]);
+        try {
+            $request->validate([
+                'categoryname' => 'required',
+                'type' => 'required|in:income,expense',
+                'userId' => [
+                    'required',
+                    Rule::exists('users', 'id')->where(function ($query) use ($request) {
+                        $query->where('id', $request->userId);
+                    })
+                ]
+            ]);
 
-        return response()->json(['category' => $category], 201);
+            $category = categorie::create([
+                'userId' => $request->userId,
+                'categoryname' => $request->categoryname,
+                'type' => $request->type,
+            ]);
+
+            return response()->json(['message' => 'Category created successfully', 'category' => $category], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to create category', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function show($id)
     {
-        $category = categorie::findOrFail($id);
-        return response()->json(['category' => $category]);
-    }
-
-    public function edit($id)
-    {
-        // Not applicable for API
+        try {
+            $category = categorie::findOrFail($id);
+            return response()->json(['category' => $category]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Category not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to retrieve category', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'categoryname' => 'required|unique:categories,categoryname,' . $id,
-            'type' => 'required|in:income,expense',
-        ]);
+        try {
+            $request->validate([
+                'categoryname' => 'required|unique:categories,categoryname,' . $id,
+                'type' => 'required|in:income,expense',
+            ]);
+            $category = categorie::findOrFail($id);
+            // if ($category->userId !== Auth::id()) {
+            //     return response()->json(['message' => 'Unauthorized'], 401);
+            // }
+            $category->update([
+                'categoryname' => $request->categoryname,
+                'type' => $request->type,
+            ]);
 
-        $category = categorie::findOrFail($id);
-        $category->update([
-            'categoryname' => $request->categoryname,
-            'type' => $request->type,
-        ]);
-
-        return response()->json(['category' => $category]);
+            return response()->json(['message' => 'Category updated successfully', 'category' => $category], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update category', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy($id)
     {
-        $category = categorie::findOrFail($id);
-        $category->delete();
-        return response()->json(null, 204);
+        try {
+            $validator = validator(['id' => $id], ['id' => 'required|exists:categories,id']);
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+
+            $category = categorie::findOrFail($id);
+            // if ($category->userId !== Auth::id()) {
+            //     return response()->json(['message' => 'Unauthorized'], 401);
+            // }
+
+            $category->delete();
+            return response()->json(['message' => 'Category deleted successfully'], 200);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete category', 'error' => $e->getMessage()], 500);
+        }
     }
 }
