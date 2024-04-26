@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('rest', 10, 2)->nullable();
             $table->decimal('balncebefore', 10, 2);
             $table->date('transaction_date');
+            $table->enum('frequency', ['weekly', "monthly", 'yearly', 'daily']);
+
             $table->timestamps();
         });
     }

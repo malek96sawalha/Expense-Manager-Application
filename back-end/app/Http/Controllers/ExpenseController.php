@@ -79,7 +79,10 @@ class ExpenseController extends Controller
             'description' => 'nullable|string',
             'transaction_date' => 'required|date',
         ]);
+        $balncebeforeThisTransaction = Auth::user()->rest;
 
+        $request['balncebefore'] = $balncebeforeThisTransaction;
+        $request['rest'] = $balncebeforeThisTransaction - $request->amount;
         $Expense->update($request->all());
 
         return response()->json(['message' => 'Expense updated successfully', 'data' => $Expense]);
