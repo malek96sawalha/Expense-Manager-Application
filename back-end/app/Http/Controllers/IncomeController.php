@@ -2,25 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Income;
 use Illuminate\Http\Request;
-
+use App\Models\Income;
 class IncomeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $incomes = Income::all();
+        return response()->json(['incomes' => $incomes], 200);
     }
 
     /**
@@ -28,23 +18,36 @@ class IncomeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'source_name' => 'required|string',
+                'amount' => 'required|numeric',
+                'frequency' => 'required|string',
+            ]);
+    
+            $income = Income::create([
+                'user_id' => $request->user_id,
+                'source_name' => $request->source_name,
+                'amount' => $request->amount,
+                'frequency' => $request->frequency,
+            ]);
+    
+            // If you need to return something after successful creation
+            return response()->json(['message' => 'Income record created successfully'], 201);
+        } catch (\Exception $e) {
+            // Log the exception or return an error response
+            return response()->json(['error' => 'Failed to store income record: ' . $e->getMessage()], 500);
+        }
     }
+    
 
     /**
      * Display the specified resource.
      */
     public function show(Income $income)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Income $income)
-    {
-        //
+        return response()->json(['income' => $income], 200);
     }
 
     /**
@@ -52,7 +55,15 @@ class IncomeController extends Controller
      */
     public function update(Request $request, Income $income)
     {
-        //
+        $request->validate([
+            'source_name' => 'string',
+            'amount' => 'numeric',
+            'frequency' => 'string',
+        ]);
+
+        $income->update($request->only(['source_name', 'amount', 'frequency']));
+
+        return response()->json(['message' => 'Income updated successfully'], 200);
     }
 
     /**
@@ -60,6 +71,8 @@ class IncomeController extends Controller
      */
     public function destroy(Income $income)
     {
-        //
+        $income->delete();
+
+        return response()->json(['message' => 'Income deleted successfully'], 200);
     }
 }
