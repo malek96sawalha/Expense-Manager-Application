@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Categorie;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class CategorieController extends Controller
 {
@@ -12,54 +16,63 @@ class CategorieController extends Controller
      */
     public function index()
     {
-        //
+        $categories = categorie::all();
+        return response()->json(['categories' => $categories]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        // Not applicable for API
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'categoryname' => 'required|unique:categories',
+            'type' => 'required|in:income,expense',
+        ]);
+        $user = Auth::user();
+        $category = categorie::create([
+            // 'userId' => $user->id,
+            'userId' => $request->userId,
+            'categoryname' => $request->categoryname,
+            'type' => $request->type,
+        ]);
+
+        return response()->json(['category' => $category], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Categorie $categorie)
+    public function show($id)
     {
-        //
+        $category = categorie::findOrFail($id);
+        return response()->json(['category' => $category]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Categorie $categorie)
+    public function edit($id)
     {
-        //
+        // Not applicable for API
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Categorie $categorie)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'categoryname' => 'required|unique:categories,categoryname,' . $id,
+            'type' => 'required|in:income,expense',
+        ]);
+
+        $category = categorie::findOrFail($id);
+        $category->update([
+            'categoryname' => $request->categoryname,
+            'type' => $request->type,
+        ]);
+
+        return response()->json(['category' => $category]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Categorie $categorie)
+    public function destroy($id)
     {
-        //
+        $category = categorie::findOrFail($id);
+        $category->delete();
+        return response()->json(null, 204);
     }
 }
