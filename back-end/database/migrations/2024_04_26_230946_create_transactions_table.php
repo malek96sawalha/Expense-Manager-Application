@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('expenses', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('userId');
-            $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('userId')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('categoryId');
             $table->foreign('categoryId')->references('id')->on('categories')->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
+            $table->enum('type', ['Income', 'Expense'])->nullable();
+            $table->string('sourcename');
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->enum('frequency', ['weekly', "monthly", 'yearly', 'daily'])->nullable();
             $table->string('description')->nullable();
             $table->decimal('rest', 10, 2)->nullable();
-            $table->decimal('balncebefore', 10, 2);
-            $table->date('transaction_date');
-            $table->enum('frequency', ['weekly', "monthly", 'yearly', 'daily']);
-
+            $table->decimal('balncebefore', 10, 2)->nullable();
+            $table->date('transaction_date')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('expenses');
+        Schema::dropIfExists('transactions');
     }
 };

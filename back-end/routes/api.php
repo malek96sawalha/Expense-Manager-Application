@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\TransactionController;
 
 
 /*
@@ -23,10 +24,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::apiResource('incomes', IncomeController::class);
+
 
 Route::apiResource('categories', CategorieController::class);
 Route::get('category/state-and-user', [CategorieController::class, 'getByStateAndUserId']);
 
 
-Route::apiResource('expense', ExpenseController::class);
+
+Route::apiResource('transaction', TransactionController::class);
