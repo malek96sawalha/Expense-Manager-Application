@@ -2,11 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
 use App\Http\Controllers\CategorieController;
-=======
 use App\Http\Controllers\ExpenseController;
->>>>>>> 2cd343d36f79af813b176d37ef252c15f204052c
 
 /*
 |--------------------------------------------------------------------------
