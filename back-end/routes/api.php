@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\ExpenseController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
  Route::apiResource('incomes', IncomeController::class);
 
+Route::apiResource('categories', CategorieController::class);
+// Route::get('/categories', [CategorieController::class, 'index']);
+
+Route::apiResource('expense', ExpenseController::class);

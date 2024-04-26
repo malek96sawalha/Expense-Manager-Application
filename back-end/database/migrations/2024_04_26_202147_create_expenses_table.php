@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('categoryId')->references('id')->on('categories')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->string('description')->nullable();
+            $table->integer('rest')->nullable();
             $table->date('transaction_date');
             $table->timestamps();
         });
