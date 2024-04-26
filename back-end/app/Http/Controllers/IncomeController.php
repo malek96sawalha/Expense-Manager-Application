@@ -21,9 +21,8 @@ class IncomeController extends Controller
     {
         try {
             $request->validate([
-                'userId' => 'required|exists:users,id',
                 'sourcename' => 'required|string',
-                'userId' => 'required|exists:users,id',
+                'categoryId' => 'required|exists:categories,id',
                 'sourcename' => 'required|string',
                 'amount' => 'required|numeric',
                 'frequency' => 'required|string',
@@ -33,10 +32,13 @@ class IncomeController extends Controller
             $income = Income::create([
                 'userId' => $request->userId,
                 'sourcename' => $request->sourcename,
-                'userId' => $request->userId,
+                'categoryId' => $request->categoryId,
                 'sourcename' => $request->sourcename,
                 'amount' => $request->amount,
                 'frequency' => $request->frequency,
+                'rest' => $request->rest,
+                'balncebefore' => $request->balncebefore,
+                'transaction_date' => $request->transaction_date,
             ]);
 
 
@@ -67,13 +69,14 @@ class IncomeController extends Controller
             $income = Income::findOrFail($id);
     
             $request->validate([
-                'userId' => 'numeric',
-                'sourcename' => 'string',
-                'amount' => 'numeric',
-                'frequency' => 'string',
+                'sourcename' => 'required|string',
+                'categoryId' => 'required|exists:categories,id',
+                'sourcename' => 'required|string',
+                'amount' => 'required|numeric',
+                'frequency' => 'required|string',
             ]);
     
-            $income->update($request->only(['userId','sourcename', 'amount', 'frequency']));
+            $income->update($request->only(['userId','sourcename', 'amount', 'frequency','categoryId','rest','balncebefore','transaction_date']));
     
             return response()->json(['message' => 'Income updated successfully'], 200);
         } catch (\Exception $e) {

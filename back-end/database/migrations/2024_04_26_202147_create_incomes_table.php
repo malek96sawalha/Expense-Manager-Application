@@ -15,9 +15,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('userId');
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('categoryId');
+            $table->foreign('categoryId')->references('id')->on('categories')->onDelete('cascade');
             $table->string('sourcename');
             $table->decimal('amount', 10, 2);
-            $table->string('frequency');
+            $table->enum('frequency', ['weekly', "monthly", 'yearly', 'daily']);
+            $table->decimal('rest', 10, 2)->nullable();
+            $table->decimal('balncebefore', 10, 2);
+            $table->date('transaction_date');
             $table->timestamps();
         });
     }
