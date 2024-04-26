@@ -12,6 +12,10 @@ class Income extends Model
         'userId',
         'sourcename',
         'amount',
+        'categoryId',
+        'rest',
+        'balncebefore',
+        'transaction_date',
         'frequency'
     ];
 }

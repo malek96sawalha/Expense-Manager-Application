@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Income;
+
 class IncomeController extends Controller
 {
 
@@ -20,19 +21,27 @@ class IncomeController extends Controller
     {
         try {
             $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'source_name' => 'required|string',
+                'sourcename' => 'required|string',
+                'categoryId' => 'required|exists:categories,id',
+                'sourcename' => 'required|string',
                 'amount' => 'required|numeric',
                 'frequency' => 'required|string',
             ]);
-    
+
+
             $income = Income::create([
-                'user_id' => $request->user_id,
-                'source_name' => $request->source_name,
+                'userId' => $request->userId,
+                'sourcename' => $request->sourcename,
+                'categoryId' => $request->categoryId,
+                'sourcename' => $request->sourcename,
                 'amount' => $request->amount,
                 'frequency' => $request->frequency,
+                'rest' => $request->rest,
+                'balncebefore' => $request->balncebefore,
+                'transaction_date' => $request->transaction_date,
             ]);
-    
+
+
             // If you need to return something after successful creation
             return response()->json(['message' => 'Income record created successfully'], 201);
         } catch (\Exception $e) {
@@ -40,6 +49,7 @@ class IncomeController extends Controller
             return response()->json(['error' => 'Failed to store income record: ' . $e->getMessage()], 500);
         }
     }
+
     
 
     /**
@@ -53,18 +63,28 @@ class IncomeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Income $income)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'source_name' => 'string',
-            'amount' => 'numeric',
-            'frequency' => 'string',
-        ]);
-
-        $income->update($request->only(['source_name', 'amount', 'frequency']));
-
-        return response()->json(['message' => 'Income updated successfully'], 200);
+        try {
+            $income = Income::findOrFail($id);
+    
+            $request->validate([
+                'sourcename' => 'required|string',
+                'categoryId' => 'required|exists:categories,id',
+                'sourcename' => 'required|string',
+                'amount' => 'required|numeric',
+                'frequency' => 'required|string',
+            ]);
+    
+            $income->update($request->only(['userId','sourcename', 'amount', 'frequency','categoryId','rest','balncebefore','transaction_date']));
+    
+            return response()->json(['message' => 'Income updated successfully'], 200);
+        } catch (\Exception $e) {
+            // Log the exception or return an error response
+            return response()->json(['error' => 'Failed to update income record: ' . $e->getMessage()], 500);
+        }
     }
+    
 
     /**
      * Remove the specified resource from storage.

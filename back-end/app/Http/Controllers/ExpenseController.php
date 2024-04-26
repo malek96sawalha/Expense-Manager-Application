@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
@@ -31,13 +32,15 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'userId' => 'required|exists:users,id',
             'categoryId' => 'required|exists:categories,id',
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'transaction_date' => 'required|date',
         ]);
+        $balncebeforeThisTransaction = Auth::user()->rest;
 
+        $request['balncebefore'] = $balncebeforeThisTransaction;
+        $request['rest'] = $balncebeforeThisTransaction - $request->amount;
         $transaction = Expense::create($request->all());
 
         return response()->json(['message' => 'Expense created successfully', 'data' => $transaction], 201);
@@ -76,7 +79,10 @@ class ExpenseController extends Controller
             'description' => 'nullable|string',
             'transaction_date' => 'required|date',
         ]);
+        $balncebeforeThisTransaction = Auth::user()->rest;
 
+        $request['balncebefore'] = $balncebeforeThisTransaction;
+        $request['rest'] = $balncebeforeThisTransaction - $request->amount;
         $Expense->update($request->all());
 
         return response()->json(['message' => 'Expense updated successfully', 'data' => $Expense]);
