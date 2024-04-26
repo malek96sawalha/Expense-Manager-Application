@@ -16,4 +16,11 @@ class Expense extends Model
         'rest',
         'transaction_date',
     ];
+
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId');
+    }
 }
