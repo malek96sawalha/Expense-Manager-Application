@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
             $table->string('categoryname');
             $table->enum('type', ['income', 'expense']);
+            $table->float('budget')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

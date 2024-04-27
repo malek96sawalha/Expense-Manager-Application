@@ -10,6 +10,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+
 
 class CategorieController extends Controller
 {
@@ -30,6 +32,10 @@ class CategorieController extends Controller
 
     public function store(Request $request)
     {
+        // print('<pre>');
+        // print_r($request->hasFile('image'));
+        // print('</pre>');
+        // die;
         try {
             $request->validate([
                 'categoryname' => 'required',
@@ -39,14 +45,25 @@ class CategorieController extends Controller
                     Rule::exists('users', 'id')->where(function ($query) use ($request) {
                         $query->where('id', $request->userId);
                     })
-                ]
+                ],
+                'image' => 'image|mimes:jpeg,png,jpg,gif|max:20000',
+
             ]);
+
+            $imageName = null;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('images'), $imageName);
+            }
 
             $category = categorie::create([
                 'userId' => $request->userId,
                 'categoryname' => $request->categoryname,
                 'type' => $request->type,
+                'image' => $imageName ? 'images/' . $imageName : null, // Handle case when no image is uploaded
             ]);
+
 
             return response()->json(['message' => 'Category created successfully', 'category' => $category], 201);
         } catch (ValidationException $e) {
@@ -68,20 +85,23 @@ class CategorieController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function updateWithImage(Request $request, $id)
     {
+
         try {
-            $request->validate([
-                'categoryname' => 'required|unique:categories,categoryname,' . $id,
-                'type' => 'required|in:income,expense',
-            ]);
             $category = categorie::findOrFail($id);
             // if ($category->userId !== Auth::id()) {
             //     return response()->json(['message' => 'Unauthorized'], 401);
             // }
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('/images'), $imageName);
+            }
             $category->update([
                 'categoryname' => $request->categoryname,
-                'type' => $request->type,
+                'budget' => $request->budget,
+                'image' => 'images/' . $imageName,
             ]);
 
             return response()->json(['message' => 'Category updated successfully', 'category' => $category], 201);
@@ -125,7 +145,7 @@ class CategorieController extends Controller
 
             $state = $request->state;
             $userId = $request->userId;
-            // if (userId !== Auth::id()) {
+            // if ($userId !== Auth::id()) {
             //     return response()->json(['message' => 'Unauthorized'], 401);
             // }
             $categories = categorie::where('userId', $userId)
@@ -144,5 +164,26 @@ class CategorieController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to retrieve categories', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    public function showBudget(Request $request)
+    {
+        // Fetch all categories along with their related transactions and calculate the total amount transacted
+        $categories = Categorie::with('transactions')
+            ->get()
+            ->map(function ($category) {
+                $totalTransactionAmount = $category->transactions->sum('amount');
+                $remainingBudget = $category->budget - $totalTransactionAmount;
+
+                return [
+                    'category_id' => $category->id,
+                    'category_name' => $category->categoryname,
+                    'total_transaction_amount' => $totalTransactionAmount,
+                    'budget' => $category->budget,
+                    'remaining_budget' => $remainingBudget,
+                ];
+            });
+
+        return response()->json(['categories' => $categories]);
     }
 }

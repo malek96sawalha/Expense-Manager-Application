@@ -10,6 +10,10 @@ class Categorie extends Model
     use HasFactory;
 
     protected $fillable = [
-        'userId', 'categoryname', 'type',
+        'userId', 'categoryname', 'type', 'image', 'budget'
     ];
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'categoryId');
+    }
 }
