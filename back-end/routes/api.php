@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,8 +30,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])->middleware('cors');
 
 Route::get('/get-csrf-token', function () {
     return response()->json(['token' => csrf_token()]);
