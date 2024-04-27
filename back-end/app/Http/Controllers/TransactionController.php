@@ -13,14 +13,14 @@ class TransactionController extends Controller
     public function index()
     {
         $transaction = Transaction::all();
-        return response()->json([' transaction' => $transaction], 200);    }
+        return response()->json([' transaction' => $transaction], 200);
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-       
     }
 
     /**
@@ -41,12 +41,12 @@ class TransactionController extends Controller
                 'balncebefore' => 'required|numeric',
                 'transaction_date' => 'required|date',
             ]);
-            
-    
+
+
             $transaction = Transaction::create([
                 'userId' => $request->userId,
                 'categoryId' => $request->categoryId,
-                'type' => $request->type,  
+                'type' => $request->type,
                 'sourcename' => $request->sourcename,
                 'amount' => $request->amount,
                 'frequency' => $request->frequency,
@@ -55,7 +55,7 @@ class TransactionController extends Controller
                 'balncebefore' => $request->balncebefore,
                 'transaction_date' => $request->transaction_date,
             ]);
-    
+
             // If you need to return something after successful creation
             return response()->json(['message' => 'Transaction record created successfully'], 201);
         } catch (\Exception $e) {
@@ -87,7 +87,7 @@ class TransactionController extends Controller
     {
         try {
             $income = Transaction::findOrFail($id);
-    
+
             $request->validate([
                 'categoryId' => 'required|exists:categories,id',
                 'type' => 'required|in:Income,Expense',
@@ -99,9 +99,9 @@ class TransactionController extends Controller
                 'balncebefore' => 'required|numeric',
                 'transaction_date' => 'required|date',
             ]);
-    
-            $income->update($request->only(['sourcename', 'amount', 'frequency','categoryId','rest','balncebefore','transaction_date','type']));
-    
+
+            $income->update($request->only(['sourcename', 'amount', 'frequency', 'categoryId', 'rest', 'balncebefore', 'transaction_date', 'type']));
+
             return response()->json(['message' => 'Income updated successfully'], 200);
         } catch (\Exception $e) {
             // Log the exception or return an error response
@@ -116,5 +116,8 @@ class TransactionController extends Controller
     {
         $transaction->delete();
 
-        return response()->json(['message' => 'transaction deleted successfully'], 200);    }
+        return response()->json(['message' => 'transaction deleted successfully'], 200);
+    }
+
+
 }
