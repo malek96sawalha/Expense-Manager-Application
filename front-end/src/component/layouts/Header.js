@@ -100,6 +100,62 @@ export default function () {
           </li>
           {/* /Search */}
  
+ {/* Notifications */}
+ <li className="nav-item dropdown">
+            <Link
+              to="javascript:void(0)"
+              className="dropdown-toggle nav-link"
+              data-toggle="dropdown"
+              id="MakeNotiOpen"
+            >
+              <i className="fa fa-bell-o" />
+              <span className="badge badge-pill">2</span>
+            </Link>
+            <div className="dropdown-menu notifications">
+              <div className="topnav-dropdown-header">
+                <span className="notification-title">Notifications</span>
+                <Link className="clear-noti">Clear All</Link>
+              </div>
+              <div className="noti-content">
+                <ul className="notification-list">
+                  <></>
+                </ul>
+              </div>
+              <div className="topnav-dropdown-footer">
+                <Link to="javascript:void(0)">View all Notifications</Link>
+              </div>
+            </div>
+          </li>
+          {/* /Notifications */}
+          
+          <li className="nav-item   main-drop">
+            <Link
+              to="javascript:void(0)"
+              className="dropdown-toggle nav-link"
+              data-toggle=""
+            >
+              <span className="user-img">
+                <p>{user ? JSON.parse(user).name : ""}</p>
+              </span>
+              <span>
+                {/*?php echo htmlentities(ucfirst($_SESSION['userlogin']));?*/}
+              </span>
+            </Link>
+            {/* <div className="dropdown-menu">
+              <Link
+                className="dropdown-item"
+                to={`/users/${user ? JSON.parse(user).id : ""}`}
+              >
+                My Profile
+              </Link>
+              <Link className="dropdown-item" to="javascript:void(0)">
+                Settings
+              </Link>
+              <Link className="dropdown-item" to="javascript:void(0)">
+                Logout
+              </Link>
+            </div> */}
+          </li>
         </ul>
         {/* /Header Menu */}
         {/* Mobile Menu */}

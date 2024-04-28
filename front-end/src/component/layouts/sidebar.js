@@ -25,12 +25,14 @@ export default function () {
       window.localStorage.clear();
       dispatch(userdata(response.data.user));
       window.location.href = "/login";
+      // navigate("/login");
     } catch (error) {
       console.log(error);
     }
   };
   return (
     <>
+    
       <div className="sidebar" id="sidebar">
         <div className="sidebar-inner slimscroll">
           <div id="sidebar-menu" className="sidebar-menu">
