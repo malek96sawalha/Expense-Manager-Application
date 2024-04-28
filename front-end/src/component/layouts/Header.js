@@ -58,7 +58,7 @@ export default function () {
       <div className="header">
         {/* Logo */}
         <div className="header-left">
-          <Link to="index.php" className="logo">
+          <Link to="javascript:void(0)" className="logo">
             <img src="assets/img/main logo.png" width={40} height={40} alt="" />
           </Link>
         </div>
@@ -80,54 +80,8 @@ export default function () {
         </Link>
         {/* Header Menu */}
         <ul className="nav user-menu">
-          {/* Search */}
-          <li className="nav-item">
-            <div className="top-nav-search">
-              <Link to="javascript:void(0);" className="responsive-search">
-                <i className="fa fa-search" />
-              </Link>
-              <form action="search.php">
-                <input
-                  className="form-control"
-                  type="text"
-                  placeholder="Search here"
-                />
-                <button className="btn" type="submit">
-                  <i className="fa fa-search" />
-                </button>
-              </form>
-            </div>
-          </li>
-          {/* /Search */}
- 
- {/* Notifications */}
- <li className="nav-item dropdown">
-            <Link
-              to="javascript:void(0)"
-              className="dropdown-toggle nav-link"
-              data-toggle="dropdown"
-              id="MakeNotiOpen"
-            >
-              <i className="fa fa-bell-o" />
-              <span className="badge badge-pill">2</span>
-            </Link>
-            <div className="dropdown-menu notifications">
-              <div className="topnav-dropdown-header">
-                <span className="notification-title">Notifications</span>
-                <Link className="clear-noti">Clear All</Link>
-              </div>
-              <div className="noti-content">
-                <ul className="notification-list">
-                  <></>
-                </ul>
-              </div>
-              <div className="topnav-dropdown-footer">
-                <Link to="javascript:void(0)">View all Notifications</Link>
-              </div>
-            </div>
-          </li>
-          {/* /Notifications */}
-          
+
+
           <li className="nav-item   main-drop">
             <Link
               to="javascript:void(0)"

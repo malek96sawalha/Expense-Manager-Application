@@ -6,7 +6,7 @@ import axios from "../../api/axios";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import FirstChart from "./chart";
-import Chart from "./chart2";
+
 const fetchCollection = async () => {
   try {
     const response = await axios.get(`/TransactionData`);

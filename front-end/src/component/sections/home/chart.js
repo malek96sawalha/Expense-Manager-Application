@@ -18,7 +18,7 @@ console.log(tran);
   useEffect(() => {
     fetchTransactionData();
     setData(tran);
-  }, []);
+  }, [tran]);
 
   const fetchTransactionData = async () => {
     // try {

@@ -42,19 +42,12 @@ export default function () {
               </li>
 
               <li className="">
-                <Link to="/" className={page && page === "" ? "noti-dot" : ""}>
+                <Link to="/" className={page && page == "" ? "noti-dot" : ""}>
                   <i className="la la-user" /> <span> Dashboard</span>
                 </Link>
               </li>
 
-              {/* <li className="menu-title">
-                <span>Employees</span>
-              </li>
-              <li className="submenu">
-                <Link to="#" className="noti-dot">
-                  <i className="la la-user" /> <span> Employees</span>
-                </Link>
-              </li> */}
+      
               <li className="">
                 <Link
                   to="/categories"
