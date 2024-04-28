@@ -21,7 +21,8 @@ class CategorieController extends Controller
     public function index()
     {
         try {
-            $categories = categorie::all();
+            $user = auth()->user();
+            $categories = categorie::where('userId', $user->id)->get();
             return response()->json(['categories' => $categories]);
         } catch (QueryException $e) {
             return response()->json(['message' => 'Failed to retrieve categories', 'error' => $e->getMessage()], 500);

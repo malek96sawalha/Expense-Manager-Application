@@ -52,7 +52,9 @@ Route::delete('deleteCategories/{category}', [CategorieController::class, 'destr
 Route::post('categories/{id}', [CategorieController::class, 'updateWithImage'])->name('categories.update');
 
 
+
 Route::apiResource('transaction', TransactionController::class);
+Route::post('transaction/description/{id}', [TransactionController::class, 'description'])->name('description.update');
 
 
 Route::middleware('guest')->group(function () {

@@ -96,7 +96,7 @@ class TransactionController extends Controller
     {
 
         $transaction = Transaction::findOrFail($id);
-        
+
         $request->validate([
             'sourcename' => 'required|string',
             'amount' => 'required|numeric',
@@ -151,5 +151,24 @@ class TransactionController extends Controller
         $transaction->delete();
 
         return response()->json(['message' => 'transaction deleted successfully'], 200);
+    }
+
+
+    public function description(Request $request, $id)
+    {
+
+        $transaction = Transaction::findOrFail($id);
+        
+        $request->validate([
+            'sourcename' => 'required|string',
+            'description' => 'nullable|string',
+        ]);
+
+        $transaction->sourcename = $request->sourcename;
+        $transaction->description = $request->description;
+
+        $transaction->save();
+
+        return response()->json(['message' => 'Transaction updated successfully'], 200);
     }
 }

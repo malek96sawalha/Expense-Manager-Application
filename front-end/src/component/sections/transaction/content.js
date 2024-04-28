@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import axios from "../../api/axios";
 import Add from "./add";
 import Edit from "./edit";
+import Description from "./description";
 import Delete from "./delete";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -21,6 +22,7 @@ const fetchCategories = async () => {
 export default function () {
   const userInfo = useSelector((state) => state.userData);
   const [editpage, seteditpage] = useState(false);
+  const [descriptionPage, setdescriptionPage] = useState(false);
   const [deletePage, setdeletePage] = useState(false);
 
   const {
@@ -34,7 +36,7 @@ export default function () {
     refetch();
   };
   console.log(transactions);
-  
+
   if (isLoading)
     return (
       <div>
@@ -93,7 +95,7 @@ export default function () {
                   </thead>
                   <tbody>
                     {transactions.transactions &&
-                      transactions.transactions.map((transaction) => (
+                      transactions.transactions.map((transaction, index) => (
                         <tr key={transaction.id}>
                           <td>
                             <h2 className="table-avatar">
@@ -116,7 +118,7 @@ export default function () {
                           <td>{transaction.amount}</td>
                           <td>{transaction.rest}</td>
                           <td>{transaction.transaction_date}</td>
-                          
+
                           <td className="text-right">
                             <div className="dropdown dropdown-action">
                               <Link
@@ -128,18 +130,35 @@ export default function () {
                                 <i className="material-icons">more_vert</i>
                               </Link>
                               <div className="dropdown-menu dropdown-menu-right">
-                                <Link
-                                  className="dropdown-item"
-                                  to="javascript:void(0)"
-                                  data-toggle="modal"
-                                  data-target="#edit_transaction"
-                                  data-id={transaction.id}
-                                  onClick={() => {
-                                    seteditpage(transaction);
-                                  }}
-                                >
-                                  <i className="fa fa-pencil m-r-5" /> Edit
-                                </Link>
+                                {index ===
+                                transactions.transactions.length - 1 ? (
+                                  <Link
+                                    className="dropdown-item"
+                                    to="javascript:void(0)"
+                                    data-toggle="modal"
+                                    data-target="#edit_transaction"
+                                    data-id={transaction.id}
+                                    onClick={() => {
+                                      seteditpage(transaction);
+                                    }}
+                                  >
+                                    <i className="fa fa-pencil m-r-5" /> Edit
+                                  </Link>
+                                ) : (
+                                  <Link
+                                    className="dropdown-item"
+                                    to="javascript:void(0)"
+                                    data-toggle="modal"
+                                    data-target="#edit_description"
+                                    data-id={transaction.id}
+                                    onClick={() => {
+                                      setdescriptionPage(transaction);
+                                    }}
+                                  >
+                                    <i className="fa fa-pencil m-r-5" /> Edit
+                                  </Link>
+                                )}
+
                                 <Link
                                   className="dropdown-item"
                                   to="javascript:void(0)"
@@ -164,7 +183,19 @@ export default function () {
         </div>
       </div>
       <Add onEditComplete={handleRefetch} allCat={transactions.allCategories} />
-      {editpage && <Edit transaction={editpage} allCat={transactions.allCategories}  onEditComplete={handleRefetch} />}
+      {editpage && (
+        <Edit
+          transaction={editpage}
+          allCat={transactions.allCategories}
+          onEditComplete={handleRefetch}
+        />
+      )}
+      {editpage && (
+        <Description
+          transaction={descriptionPage}
+          onEditComplete={handleRefetch}
+        />
+      )}
       {deletePage && <Delete id={deletePage} onEditComplete={handleRefetch} />}
     </>
   );
