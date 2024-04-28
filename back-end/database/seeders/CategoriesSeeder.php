@@ -20,34 +20,25 @@ class CategoriesSeeder extends Seeder
         // Sample data for categories
         $categoriesData = [
             [
-                'userId' => $userIds[array_rand($userIds)],
+                'userId' => 1,
                 'categoryname' => 'Salary',
                 'type' => 'income',
+                'budget' => '1000',
+                'image' => 'images/salary logo.jpg',
             ],
             [
-                'userId' => $userIds[array_rand($userIds)],
-                'categoryname' => 'Freelance',
-                'type' => 'income',
-            ],
-            [
-                'userId' => $userIds[array_rand($userIds)],
+                'userId' => 1,
                 'categoryname' => 'Investment',
                 'type' => 'income',
+                'budget' => '2000',
+                'image' => 'images/investment logo.png',
             ],
             [
-                'userId' => $userIds[array_rand($userIds)],
+                'userId' => 1,
                 'categoryname' => 'Groceries',
                 'type' => 'expense',
-            ],
-            [
-                'userId' => $userIds[array_rand($userIds)],
-                'categoryname' => 'Rent',
-                'type' => 'expense',
-            ],
-            [
-                'userId' => $userIds[array_rand($userIds)],
-                'categoryname' => 'Utilities',
-                'type' => 'expense',
+                'budget' => '5000',
+                'image' => 'images/grocery logo.jpg',
             ],
         ];
 

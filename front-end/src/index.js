@@ -10,6 +10,7 @@ import Transaction from "./component/pages/transaction";
 import Login from "./component/pages/login";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
+import Registration from "./component/pages/registration";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient();
@@ -24,7 +25,10 @@ root.render(
             path="/"
             element={accessToken ? <Home /> : <Navigate to="/login" />}
           />
-
+          <Route
+            path="/registration"
+            element={!accessToken ? <Registration /> : <Navigate to="/login" />}
+          />
           <Route
             path="/categories"
             element={accessToken ? <Categories /> : <Navigate to="/login" />}
@@ -34,7 +38,7 @@ root.render(
             element={accessToken ? <Transaction /> : <Navigate to="/login" />}
           />
 
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={accessToken ? <Home /> : <Login />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

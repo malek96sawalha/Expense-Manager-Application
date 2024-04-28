@@ -47,6 +47,11 @@ Route::get('categories/{category}', [CategorieController::class, 'show'])->name(
 Route::get('category-budget', [CategorieController::class, 'showBudget']);
 Route::delete('deleteCategories/{category}', [CategorieController::class, 'destroy'])->name('categories.destroy');
 Route::post('categories/{id}', [CategorieController::class, 'updateWithImage'])->name('categories.update');
+
+
+
+// Route::apiResource('transaction', TransactionController::class);
+Route::post('transaction/description/{id}', [TransactionController::class, 'description'])->name('description.update');
 Route::apiResource('transaction', TransactionController::class);
 Route::get('TransactionData', [TransactionController::class, 'TransactionData']);
 

@@ -23,8 +23,9 @@ export default function () {
       const response = await axios.post("/logout");
       window.sessionStorage.clear();
       window.localStorage.clear();
-      dispatch(userdata(response.data.user));
+      dispatch(userdata(null));
       window.location.href = "/login";
+      // navigate("/login");
     } catch (error) {
       console.log(error);
     }
@@ -59,7 +60,6 @@ export default function () {
                   className={page && page === "categories" ? "noti-dot" : ""}
                 >
                   <i className="la la-th-list" /> <span> categories</span>
-                  
                 </Link>
               </li>
               <li className="">
