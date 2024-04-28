@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\Categorie;
-
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
@@ -19,6 +19,33 @@ class TransactionController extends Controller
         $allCategories = Categorie::where('userId', $user->id)->get();
         // $cat
         return response()->json(['transactions' => $transactions, 'allCategories' => $allCategories], 200);
+    }
+    public function TransactionData()
+    {
+        $user = Auth::user();
+        $categories = Categorie::where('userId', $user->id)->get();
+        foreach ($categories as $categorie) {
+            $data[] = [
+                'name' => $categorie->categoryname,
+                'Total' => Transaction::where('userId', $user->id)
+                    ->where('frequency', 'weekly')
+                    ->where('categoryId', $categorie->id)
+                    ->sum('amount'), 'amt' => 2100,
+            ];
+        }
+
+        // $data = [
+        //     ['name' => 'Weekly', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'weekly')->sum('amount')],
+
+        // ];
+        // ['name' => 'Monthly', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'monthly')->sum('amount')],
+        // ['name' => 'Yearly', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'yearly')->sum('amount')],
+        // ['name' => 'onlyOnce', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'onlyOnce')->sum('amount')],
+        // ['name' => 'daily', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'daily')->sum('amount')],
+        return response()->json([
+            'data' => $data,
+            'categories' => $categories
+        ], 200);
     }
 
     /**
@@ -109,23 +136,23 @@ class TransactionController extends Controller
         $cat = Categorie::where('id', $transaction->categoryId)->first();
         if ($transaction->type == 'income') {
             if ($request->type == 'income') {
-                $rest = $transaction->balncebefore + $request->amount;         
-                $cat->budget -=$transaction->amount;
-                $cat->budget +=$request->amount;
+                $rest = $transaction->balncebefore + $request->amount;
+                $cat->budget -= $transaction->amount;
+                $cat->budget += $request->amount;
             } elseif ($request->type == 'expense') {
-                $rest = $transaction->balncebefore - $request->amount;         
-                $cat->budget -=$transaction->amount;
-                $cat->budget -=$request->amount;
+                $rest = $transaction->balncebefore - $request->amount;
+                $cat->budget -= $transaction->amount;
+                $cat->budget -= $request->amount;
             }
         } elseif ($transaction->type == 'expense') {
             if ($request->type == 'income') {
-                $rest = $transaction->balncebefore + $request->amount;         
-                $cat->budget +=$transaction->amount;
-                $cat->budget +=$request->amount;
+                $rest = $transaction->balncebefore + $request->amount;
+                $cat->budget += $transaction->amount;
+                $cat->budget += $request->amount;
             } elseif ($request->type == 'expense') {
-                $rest = $transaction->balncebefore - $request->amount;         
-                $cat->budget +=$transaction->amount;
-                $cat->budget -=$request->amount;
+                $rest = $transaction->balncebefore - $request->amount;
+                $cat->budget += $transaction->amount;
+                $cat->budget -= $request->amount;
             }
         }
 
