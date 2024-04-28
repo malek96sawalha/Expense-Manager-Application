@@ -105,7 +105,7 @@ export default function () {
             <div className="container">
               {/* Account Logo */}
               <div className="account-logo">
-                <a href="index.php">
+                <a href="javascript:void(0)">
                   <img src="assets/img/main logo.png" alt="Company Logo" />
                 </a>
               </div>
