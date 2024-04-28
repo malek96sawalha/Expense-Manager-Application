@@ -56,7 +56,7 @@ const MyComponent = () => {
 
         <Bar dataKey="Total" barSize={30} fill="#8884d8" stroke="#000" />
       </BarChart>
-      <p>Weekly</p>
+      {/* <p>monthly</p> */}
     </div>
   );
 };

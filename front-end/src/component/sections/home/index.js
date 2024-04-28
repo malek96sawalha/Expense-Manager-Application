@@ -5,7 +5,7 @@ import axios from "../../api/axios";
 
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import FirstChart from "./1chart";
+import FirstChart from "./chart";
 import Chart from "./chart2";
 const fetchCollection = async () => {
   try {
@@ -19,7 +19,11 @@ const fetchCollection = async () => {
 export default function () {
   const user = useSelector((state) => state.userData);
 
-  const [data, setData] = useState([]);
+  const [dataOnlyOnce, setDataOnlyOnce] = useState([]);
+  const [dataDaily, setDataDaily] = useState([]);
+  const [dataWeekly, setDataWeekly] = useState([]);
+  const [dataMonthly, setDataMonthly] = useState([]);
+  const [dataYearly, setDataYearly] = useState([]);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -30,7 +34,13 @@ export default function () {
     try {
       const response = await axios.get("/TransactionData");
       const responseData = response.data;
-      setData(responseData.data);
+      
+
+      setDataOnlyOnce(responseData.dataOnlyOnce);
+      setDataDaily(responseData.dataDaily);
+      setDataWeekly(responseData.dataWeekly);
+      setDataMonthly(responseData.dataMonthly);
+      setDataYearly(responseData.dataYearly);
       setCategories(responseData.categories);
     } catch (error) {
       console.error("Error fetching transaction data:", error);
@@ -54,8 +64,18 @@ export default function () {
             </div>
           </div>
           {/* /Page Header */}
-          <FirstChart data={data ? data : null} />
-          <Chart data={data ? data : null} />
+          <FirstChart tran={dataOnlyOnce ? dataOnlyOnce : null} />
+          <p>Only Once</p>
+          <FirstChart tran={dataDaily ? dataDaily : null} />
+          <p>Daily</p>
+          <FirstChart tran={dataWeekly ? dataWeekly : null} />
+          <p>Weekly</p>
+          <FirstChart tran={dataMonthly ? dataMonthly : null} />
+          <p>Monthly</p>
+          <FirstChart tran={dataYearly ? dataYearly : null} />
+          <p>Yearly </p>
+
+          {/* <Chart data={dataDaily ? dataDaily : null} /> */}
         </div>
         {/* /Page Content */}
       </div>

@@ -30,20 +30,131 @@ class TransactionController extends Controller
                 'Total' => Transaction::where('userId', $user->id)
                     ->where('frequency', 'weekly')
                     ->where('categoryId', $categorie->id)
-                    ->sum('amount'), 'amt' => 2100,
+                    ->sum('amount'), 
+                'amt' => 2100,
             ];
         }
 
-        // $data = [
-        //     ['name' => 'Weekly', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'weekly')->sum('amount')],
+        foreach ($categories as $categorie) {
+            $incomeTotalWeekly = Transaction::where('userId', $user->id)
+                ->where('frequency', 'weekly')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'income')
+                ->sum('amount');
+        
+            $expenseTotalWeekly = Transaction::where('userId', $user->id)
+                ->where('frequency', 'weekly')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'expense')
+                ->sum('amount');
+        
+            $totalWeekly = $incomeTotalWeekly - $expenseTotalWeekly;
+        
+            $dataWeekly[] = [
+                'name' => $categorie->categoryname,
+                'Total' => $totalWeekly,
+                'amt' => 2100,
+            ];
 
-        // ];
-        // ['name' => 'Monthly', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'monthly')->sum('amount')],
-        // ['name' => 'Yearly', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'yearly')->sum('amount')],
-        // ['name' => 'onlyOnce', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'onlyOnce')->sum('amount')],
-        // ['name' => 'daily', 'uv' => Transaction::where('userId', $user->id)->where('frequency', 'daily')->sum('amount')],
+
+
+
+            $incomeTotalDaily = Transaction::where('userId', $user->id)
+                ->where('frequency', 'daily')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'income')
+                ->sum('amount');
+        
+            $expenseTotalDaily = Transaction::where('userId', $user->id)
+                ->where('frequency', 'daily')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'expense')
+                ->sum('amount');
+        
+            $totalDaily = $incomeTotalDaily - $expenseTotalDaily;
+        
+            $dataDaily[] = [
+                'name' => $categorie->categoryname,
+                'Total' => $totalDaily,
+                'amt' => 2100,
+            ];
+
+
+
+
+            $incomeTotalMonthly = Transaction::where('userId', $user->id)
+                ->where('frequency', 'monthly')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'income')
+                ->sum('amount');
+        
+            $expenseTotalMonthly = Transaction::where('userId', $user->id)
+                ->where('frequency', 'monthly')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'expense')
+                ->sum('amount');
+        
+            $totalMonthly = $incomeTotalMonthly - $expenseTotalMonthly;
+        
+            $dataMonthly[] = [
+                'name' => $categorie->categoryname,
+                'Total' => $totalMonthly,
+                'amt' => 2100,
+            ];
+
+
+
+
+            $incomeTotalYearly = Transaction::where('userId', $user->id)
+                ->where('frequency', 'yearly')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'income')
+                ->sum('amount');
+        
+            $expenseTotalYearly = Transaction::where('userId', $user->id)
+                ->where('frequency', 'yearly')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'expense')
+                ->sum('amount');
+        
+            $totalYearly = $incomeTotalYearly - $expenseTotalYearly;
+        
+            $dataYearly[] = [
+                'name' => $categorie->categoryname,
+                'Total' => $totalYearly,
+                'amt' => 2100,
+            ];
+
+
+
+            $incomeTotalOnlyOnce = Transaction::where('userId', $user->id)
+                ->where('frequency', 'onlyOnce')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'income')
+                ->sum('amount');
+        
+            $expenseTotalOnlyOnce = Transaction::where('userId', $user->id)
+                ->where('frequency', 'onlyOnce')
+                ->where('categoryId', $categorie->id)
+                ->where('type', 'expense')
+                ->sum('amount');
+        
+            $totalOnlyOnce = $incomeTotalOnlyOnce - $expenseTotalOnlyOnce;
+        
+            $dataOnlyOnce[] = [
+                'name' => $categorie->categoryname,
+                'Total' => $totalOnlyOnce,
+                'amt' => 2100,
+            ];
+
+        }
+ 
         return response()->json([
-            'data' => $data,
+            'dataOnlyOnce' => $dataOnlyOnce,
+            'dataDaily' => $dataDaily,
+            'dataWeekly' => $dataWeekly,
+            'dataMonthly' => $dataMonthly,
+            'dataYearly' => $dataYearly,
             'categories' => $categories
         ], 200);
     }
