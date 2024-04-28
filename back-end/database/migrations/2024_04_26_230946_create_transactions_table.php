@@ -17,10 +17,10 @@ return new class extends Migration
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('categoryId');
             $table->foreign('categoryId')->references('id')->on('categories')->onDelete('cascade');
-            $table->enum('type', ['Income', 'Expense'])->nullable();
+            $table->enum('type', ['income', 'expense'])->nullable();
             $table->string('sourcename');
             $table->decimal('amount', 10, 2)->nullable();
-            $table->enum('frequency', ['weekly', "monthly", 'yearly', 'daily'])->nullable();
+            $table->enum('frequency', ['weekly', "monthly", 'yearly', 'daily','onlyOnce'])->nullable();
             $table->string('description')->nullable();
             $table->decimal('rest', 10, 2)->nullable();
             $table->decimal('balncebefore', 10, 2)->nullable();

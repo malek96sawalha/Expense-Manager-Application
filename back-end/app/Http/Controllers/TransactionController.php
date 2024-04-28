@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Models\Categorie;
+
 
 class TransactionController extends Controller
 {
@@ -12,8 +14,11 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transaction = Transaction::all();
-        return response()->json([' transaction' => $transaction], 200);
+        $user = auth()->user();
+        $transactions = Transaction::with('category')->where('userId', $user->id)->get();
+        $allCategories = Categorie::where('userId', $user->id)->get();
+        // $cat
+        return response()->json(['transactions' => $transactions, 'allCategories' => $allCategories], 200);
     }
 
     /**
@@ -28,40 +33,44 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'userId' => 'required|exists:users,id',
-                'categoryId' => 'required|exists:categories,id',
-                'type' => 'required|in:Income,Expense',
-                'sourcename' => 'required|string',
-                'amount' => 'required|numeric',
-                'frequency' => 'required|in:weekly,monthly,yearly,daily',
-                'description' => 'nullable|string',
-                'rest' => 'nullable|numeric',
-                'balncebefore' => 'required|numeric',
-                'transaction_date' => 'required|date',
-            ]);
 
+        $request->validate([
+            'categoryId' => 'required|exists:categories,id',
+            'sourcename' => 'required|string',
+            'amount' => 'required|numeric',
+            'frequency' => 'required|in:weekly,monthly,yearly,daily,onlyOnce',
+            'type' => 'required|in:income,expense',
+            'description' => 'nullable|string',
+            'transaction_date' => 'required|date',
+        ]);
 
-            $transaction = Transaction::create([
-                'userId' => $request->userId,
-                'categoryId' => $request->categoryId,
-                'type' => $request->type,
-                'sourcename' => $request->sourcename,
-                'amount' => $request->amount,
-                'frequency' => $request->frequency,
-                'description' => $request->description,
-                'rest' => $request->rest,
-                'balncebefore' => $request->balncebefore,
-                'transaction_date' => $request->transaction_date,
-            ]);
+        $user = auth()->user();
+        $cat = Categorie::where('id', $request->categoryId)->first();
 
-            // If you need to return something after successful creation
-            return response()->json(['message' => 'Transaction record created successfully'], 201);
-        } catch (\Exception $e) {
-            // Log the exception or return an error response
-            return response()->json(['error' => 'Failed to store transaction record: ' . $e->getMessage()], 500);
+        if ($request->type == 'income') {
+            $rest = $cat->budget + $request->amount;
+        } elseif ($request->type == 'expense') {
+            $rest = $cat->budget - $request->amount;
         }
+
+        $transaction = Transaction::create([
+            'userId' => $user->id,
+            'categoryId' => $request->categoryId,
+            'type' => $request->type,
+            'sourcename' => $request->sourcename,
+            'amount' => $request->amount,
+            'frequency' => $request->frequency,
+            'description' => $request->description,
+            'rest' => $rest,
+            'balncebefore' => $cat->budget,
+            'transaction_date' => $request->transaction_date,
+        ]);
+
+        $cat->budget = $rest;
+
+        $cat->save();
+
+        return response()->json(['message' => 'Transaction record created successfully'], 201);
     }
 
     /**
@@ -85,28 +94,53 @@ class TransactionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $income = Transaction::findOrFail($id);
 
-            $request->validate([
-                'categoryId' => 'required|exists:categories,id',
-                'type' => 'required|in:Income,Expense',
-                'sourcename' => 'required|string',
-                'amount' => 'required|numeric',
-                'frequency' => 'required|in:weekly,monthly,yearly,daily',
-                'description' => 'nullable|string',
-                'rest' => 'nullable|numeric',
-                'balncebefore' => 'required|numeric',
-                'transaction_date' => 'required|date',
-            ]);
+        $transaction = Transaction::findOrFail($id);
+        
+        $request->validate([
+            'sourcename' => 'required|string',
+            'amount' => 'required|numeric',
+            'frequency' => 'required|in:weekly,monthly,yearly,daily,onlyOnce',
+            'type' => 'required|in:income,expense',
+            'description' => 'nullable|string',
+            'transaction_date' => 'required|date',
+        ]);
 
-            $income->update($request->only(['sourcename', 'amount', 'frequency', 'categoryId', 'rest', 'balncebefore', 'transaction_date', 'type']));
-
-            return response()->json(['message' => 'Income updated successfully'], 200);
-        } catch (\Exception $e) {
-            // Log the exception or return an error response
-            return response()->json(['error' => 'Failed to update income record: ' . $e->getMessage()], 500);
+        $cat = Categorie::where('id', $transaction->categoryId)->first();
+        if ($transaction->type == 'income') {
+            if ($request->type == 'income') {
+                $rest = $transaction->balncebefore + $request->amount;         
+                $cat->budget -=$transaction->amount;
+                $cat->budget +=$request->amount;
+            } elseif ($request->type == 'expense') {
+                $rest = $transaction->balncebefore - $request->amount;         
+                $cat->budget -=$transaction->amount;
+                $cat->budget -=$request->amount;
+            }
+        } elseif ($transaction->type == 'expense') {
+            if ($request->type == 'income') {
+                $rest = $transaction->balncebefore + $request->amount;         
+                $cat->budget +=$transaction->amount;
+                $cat->budget +=$request->amount;
+            } elseif ($request->type == 'expense') {
+                $rest = $transaction->balncebefore - $request->amount;         
+                $cat->budget +=$transaction->amount;
+                $cat->budget -=$request->amount;
+            }
         }
+
+        $transaction->type = $request->type;
+        $transaction->sourcename = $request->sourcename;
+        $transaction->amount = $request->amount;
+        $transaction->frequency = $request->frequency;
+        $transaction->description = $request->description;
+        $transaction->rest = $rest;
+        $transaction->transaction_date = $request->transaction_date;
+
+        $transaction->save();
+        $cat->save();
+
+        return response()->json(['message' => 'Transaction updated successfully'], 200);
     }
 
     /**
@@ -118,6 +152,4 @@ class TransactionController extends Controller
 
         return response()->json(['message' => 'transaction deleted successfully'], 200);
     }
-
-
 }

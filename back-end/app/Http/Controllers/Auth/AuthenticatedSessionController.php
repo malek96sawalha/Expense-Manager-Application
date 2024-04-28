@@ -35,8 +35,9 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
-        return response(['ttt' => Auth::user()]);
+        $user = Auth::user();
+       
+        return response()->json(['user' => $user]);
     }
 
     /**

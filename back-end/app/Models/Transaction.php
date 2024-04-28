@@ -14,6 +14,7 @@ class Transaction extends Model
         'amount',
         'categoryId',
         'rest',
+        'type',
         'balncebefore',
         'description',
         'transaction_date',
@@ -23,4 +24,11 @@ class Transaction extends Model
     {
         return $this->belongsTo(Categorie::class, 'categoryId');
     }
+
+        public function user()
+    {
+        return $this->belongsTo(User::class, 'userId');
+    }
+
+
 }

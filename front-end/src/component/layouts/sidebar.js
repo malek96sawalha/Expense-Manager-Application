@@ -55,18 +55,19 @@ export default function () {
               </li> */}
               <li className="">
                 <Link
-                  to="/products"
-                  className={page && page === "products" ? "noti-dot" : ""}
+                  to="/categories"
+                  className={page && page === "categories" ? "noti-dot" : ""}
                 >
-                  <i className="la la-user" /> <span> products</span>
+                  <i className="la la-th-list" /> <span> categories</span>
+                  
                 </Link>
               </li>
               <li className="">
                 <Link
-                  to="/products"
-                  className={page && page === "products" ? "noti-dot" : ""}
+                  to="/transaction"
+                  className={page && page === "transaction" ? "noti-dot" : ""}
                 >
-                  <i className="la la-user" /> <span> products</span>
+                  <i className="la la-money" /> <span> Transaction</span>
                 </Link>
               </li>
 
