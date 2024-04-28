@@ -34,7 +34,6 @@ export default function () {
     try {
       const response = await axios.get("/TransactionData");
       const responseData = response.data;
-      
 
       setDataOnlyOnce(responseData.dataOnlyOnce);
       setDataDaily(responseData.dataDaily);
@@ -64,18 +63,22 @@ export default function () {
             </div>
           </div>
           {/* /Page Header */}
-          <FirstChart tran={dataOnlyOnce ? dataOnlyOnce : null} />
-          <p>Only Once</p>
-          <FirstChart tran={dataDaily ? dataDaily : null} />
-          <p>Daily</p>
-          <FirstChart tran={dataWeekly ? dataWeekly : null} />
-          <p>Weekly</p>
-          <FirstChart tran={dataMonthly ? dataMonthly : null} />
-          <p>Monthly</p>
-          <FirstChart tran={dataYearly ? dataYearly : null} />
-          <p>Yearly </p>
+          <div className="chartsty">
+            <FirstChart tran={dataDaily ? dataDaily : null} type={"Daily"} />
+            <FirstChart tran={dataWeekly ? dataWeekly : null} type={"Weekly"} />
+            <FirstChart
+              tran={dataMonthly ? dataMonthly : null}
+              type={"Monthly"}
+            />
+            <FirstChart tran={dataYearly ? dataYearly : null} type={"Yearly"} />
 
-          {/* <Chart data={dataDaily ? dataDaily : null} /> */}
+            <FirstChart
+              tran={dataOnlyOnce ? dataOnlyOnce : null}
+              type={"Only Once"}
+            />
+
+            {/* <Chart data={dataDaily ? dataDaily : null} /> */}
+          </div>
         </div>
         {/* /Page Content */}
       </div>

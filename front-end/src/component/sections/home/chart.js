@@ -11,24 +11,16 @@ import {
 } from "recharts";
 import axios from "../../api/axios";
 
-const MyComponent = ({tran}) => {
+const MyComponent = ({ tran, type }) => {
   const [data, setData] = useState([]);
   const [categories, setCategories] = useState([]);
-console.log(tran);
+  console.log(tran);
   useEffect(() => {
     fetchTransactionData();
     setData(tran);
   }, [tran]);
 
   const fetchTransactionData = async () => {
-    // try {
-    //   const response = await axios.get("/TransactionData");
-    //   const responseData = response.data;
-    //   setData(responseData.data);
-    //   setCategories(responseData.categories);
-    // } catch (error) {
-    //   console.error("Error fetching transaction data:", error);
-    // }
     const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
       return (
         <text
@@ -44,6 +36,8 @@ console.log(tran);
 
   return (
     <div>
+      <p className="midd">{type}</p>
+
       <BarChart
         width={600}
         height={300}

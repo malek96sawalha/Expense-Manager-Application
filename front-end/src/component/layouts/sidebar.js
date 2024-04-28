@@ -23,7 +23,7 @@ export default function () {
       const response = await axios.post("/logout");
       window.sessionStorage.clear();
       window.localStorage.clear();
-      dispatch(userdata(response.data.user));
+      dispatch(userdata(null));
       window.location.href = "/login";
       // navigate("/login");
     } catch (error) {
@@ -32,7 +32,6 @@ export default function () {
   };
   return (
     <>
-    
       <div className="sidebar" id="sidebar">
         <div className="sidebar-inner slimscroll">
           <div id="sidebar-menu" className="sidebar-menu">
@@ -54,7 +53,6 @@ export default function () {
                   className={page && page === "categories" ? "noti-dot" : ""}
                 >
                   <i className="la la-th-list" /> <span> categories</span>
-                  
                 </Link>
               </li>
               <li className="">
