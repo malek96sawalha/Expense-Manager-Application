@@ -35,7 +35,6 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])->middl
 Route::get('/get-csrf-token', function () {
     return response()->json(['token' => csrf_token()]);
 })->middleware('cors');
-// Route::apiResource('categories', CategorieController::class);
 
 Route::get('category/state-and-user', [CategorieController::class, 'getByStateAndUserId']);
 Route::prefix('api')->group(function () {
