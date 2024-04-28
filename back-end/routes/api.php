@@ -35,11 +35,8 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])->middl
 Route::get('/get-csrf-token', function () {
     return response()->json(['token' => csrf_token()]);
 })->middleware('cors');
-// Route::apiResource('categories', CategorieController::class);
 
-// Route::apiResource('categories', CategorieController::class);
 Route::get('category/state-and-user', [CategorieController::class, 'getByStateAndUserId']);
-// Route::post('categories/{category}', [CategorieController::class, 'update'])->name('categories.update');
 Route::prefix('api')->group(function () {
 
     // Custom route for updating a category
@@ -50,55 +47,15 @@ Route::get('categories/{category}', [CategorieController::class, 'show'])->name(
 Route::get('category-budget', [CategorieController::class, 'showBudget']);
 Route::delete('deleteCategories/{category}', [CategorieController::class, 'destroy'])->name('categories.destroy');
 Route::post('categories/{id}', [CategorieController::class, 'updateWithImage'])->name('categories.update');
-
-
 Route::apiResource('transaction', TransactionController::class);
+Route::get('TransactionData', [TransactionController::class, 'TransactionData']);
 
-
-Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
-
-    // Route::get('login', [AuthenticatedSessionController::class, 'create'])
-    //     ->name('login');
-
-    
-
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
-
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
-
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
-
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
-});
 Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-Route::middleware('auth')->group(function () {
-    Route::get('verify-email', EmailVerificationPromptController::class)
-        ->name('verification.notice');
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout');
 
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
+Route::get('register', [RegisteredUserController::class, 'create'])
+    ->name('register');
 
-    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('verification.send');
-
-    Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-        ->name('password.confirm');
-
-    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
-
-    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
-
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
-});
+Route::post('register', [RegisteredUserController::class, 'store']);
