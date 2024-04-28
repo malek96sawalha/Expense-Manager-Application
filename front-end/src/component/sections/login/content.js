@@ -90,7 +90,7 @@ export default function () {
         <link
           rel="shortcut icon"
           type="image/x-icon"
-          href="assets/img/favicon.png"
+          href="assets/img/main logo.png"
         />
         {/* Bootstrap CSS */}
         <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
@@ -106,7 +106,7 @@ export default function () {
               {/* Account Logo */}
               <div className="account-logo">
                 <a href="index.php">
-                  <img src="assets/img/logo2.png" alt="Company Logo" />
+                  <img src="assets/img/main logo.png" alt="Company Logo" />
                 </a>
               </div>
               {/* /Account Logo */}
