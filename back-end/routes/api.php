@@ -35,7 +35,7 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])->middl
 Route::get('/get-csrf-token', function () {
     return response()->json(['token' => csrf_token()]);
 })->middleware('cors');
-Route::apiResource('categories', CategorieController::class);
+// Route::apiResource('categories', CategorieController::class);
 
 // Route::apiResource('categories', CategorieController::class);
 Route::get('category/state-and-user', [CategorieController::class, 'getByStateAndUserId']);
@@ -45,16 +45,14 @@ Route::prefix('api')->group(function () {
     // Custom route for updating a category
 });
 Route::get('categories', [CategorieController::class, 'index'])->name('categories.index');
-Route::post('categories', [CategorieController::class, 'store'])->name('categories.store');
+Route::post('categories/add', [CategorieController::class, 'store'])->name('categories.store')->middleware('auth:sanctum');
 Route::get('categories/{category}', [CategorieController::class, 'show'])->name('categories.show');
 Route::get('category-budget', [CategorieController::class, 'showBudget']);
-Route::delete('categories/{category}', [CategorieController::class, 'destroy'])->name('categories.destroy');
-Route::post('categories/{category}', [CategorieController::class, 'updateWithImage'])->name('categories.update');
+Route::delete('deleteCategories/{category}', [CategorieController::class, 'destroy'])->name('categories.destroy');
+Route::post('categories/{id}', [CategorieController::class, 'updateWithImage'])->name('categories.update');
 
 
 Route::apiResource('transaction', TransactionController::class);
-
-
 
 
 Route::middleware('guest')->group(function () {
@@ -63,10 +61,10 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+    // Route::get('login', [AuthenticatedSessionController::class, 'create'])
+    //     ->name('login');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
@@ -80,6 +78,7 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
+Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

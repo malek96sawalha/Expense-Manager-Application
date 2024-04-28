@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import Header from "../layouts/Header";
 import Sidebar from "../layouts/sidebar";
-import Content from "../sections/products/content";
+import Content from "../sections/categories/content";
 
 // Create the UserContext
 

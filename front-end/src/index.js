@@ -5,7 +5,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { store } from "./component/Redux/store";
 import "./index.css";
 import Home from "./component/pages/index";
-import Product from "./component/pages/products";
+import Categories from "./component/pages/categories";
+import Transaction from "./component/pages/transaction";
 import Login from "./component/pages/login";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
@@ -25,8 +26,12 @@ root.render(
           />
 
           <Route
-            path="/products"
-            element={accessToken ? <Product /> : <Navigate to="/login" />}
+            path="/categories"
+            element={accessToken ? <Categories /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/transaction"
+            element={accessToken ? <Transaction /> : <Navigate to="/login" />}
           />
 
           <Route path="/login" element={<Login />} />

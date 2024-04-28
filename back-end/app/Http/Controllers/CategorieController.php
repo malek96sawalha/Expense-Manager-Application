@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Validator;
 
 class CategorieController extends Controller
 {
@@ -30,48 +30,124 @@ class CategorieController extends Controller
         }
     }
 
+    // public function store(Request $request)
+    // {
+    //     $user = Auth::user();
+
+
+    //     // dd($request->request);
+    //     // print('<pre>');
+    //     // print_r($request->hasFile('image'));
+    //     // print('</pre>');
+    //     // die;
+    //        $data =  $request->request;
+
+    //         $data->validate([
+    //             'categoryname' => 'required',
+    //             'type' => 'required|in:income,expense',
+    //             'image' => 'image|mimes:jpeg,png,jpg,gif',
+
+    //         ]);
+
+
+    //         if ($request->hasFile('image')) {
+    //             $image = $request->file('image');
+    //             $imageName = time() . '.' . $image->getClientOriginalExtension();
+    //             $image->move(public_path('images'), $imageName);
+    //         }
+
+    //         $category = categorie::create([
+
+    //             'userId' => $user->id,
+    //             'categoryname' => $request->categoryname,
+    //             'type' => $request->type,
+    //             'budget' => $request->budget,
+    //             'image' => $imageName ? 'images/' . $imageName : null, // Handle case when no image is uploaded
+    //         ]);
+
+
+    //         return response()->json(['message' => 'Category created successfully', 'category' => $category], 201);
+
+    // }
+    // public function store(Request $request)
+    // {
+    //     $user = Auth::user();
+
+
+    //     // dd($request->request);
+    //     $validator = Validator::make($request->all(), [
+
+    //         'categoryname' => 'required|string',
+    //         // 'type' => 'required|in:imcome,expense',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => 422,
+    //             'errors' => $validator->errors()
+    //         ], 422);
+    //     }
+
+    //     if ($request->hasFile('image')) {
+    //         $image = $request->file('image');
+    //         $imageName = time() . '.' . $image->getClientOriginalExtension();
+    //         $image->move(public_path('images'), $imageName);
+    //     }
+    //     $cate = new Categorie();
+    //     $cate->user_id = $user->id; // Assign user ID to user_id attribute
+    //     $cate->image = 'images/' . $imageName;
+    //     $cate->categoryname = $request->categoryname;
+    //     $cate->type = $request->type;
+    //     $cate->budget = $request->budget;
+    //     $cate->save();
+
+
+
+
+    //     return response()->json(['message' => 'Category created successfully', 'category' => $cate], 201);
+    // }
+
     public function store(Request $request)
     {
-        // print('<pre>');
-        // print_r($request->hasFile('image'));
-        // print('</pre>');
-        // die;
-        try {
-            $request->validate([
-                'categoryname' => 'required',
-                'type' => 'required|in:income,expense',
-                'userId' => [
-                    'required',
-                    Rule::exists('users', 'id')->where(function ($query) use ($request) {
-                        $query->where('id', $request->userId);
-                    })
-                ],
-                'image' => 'image|mimes:jpeg,png,jpg,gif|max:20000',
-
+        if (auth()->check()) {
+            $user = auth()->user();
+            
+            $validator = Validator::make($request->all(), [
+                'categoryname' => 'required|string',
+                // 'type' => 'required|in:imcome,expense',
             ]);
-
-            $imageName = null;
+            
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            // dd($request);
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('images'), $imageName);
             }
-
-            $category = categorie::create([
-                'userId' => $request->userId,
-                'categoryname' => $request->categoryname,
-                'type' => $request->type,
-                'image' => $imageName ? 'images/' . $imageName : null, // Handle case when no image is uploaded
-            ]);
-
-
-            return response()->json(['message' => 'Category created successfully', 'category' => $category], 201);
-        } catch (ValidationException $e) {
-            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to create category', 'error' => $e->getMessage()], 500);
+            
+            $cate = new Categorie();
+            $cate->userId = $user->id; // Assign user ID to user_id attribute
+            $cate->image = 'images/' . $imageName;
+            $cate->categoryname = $request->categoryname;
+            $cate->type = $request->type;
+            $cate->budget = $request->budget;
+            $cate->save();
+            
+            return response()->json(['message' => 'Category created successfully', 'category' => $cate], 201);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
     }
+    
+
+
+
+
 
     public function show($id)
     {
@@ -85,30 +161,76 @@ class CategorieController extends Controller
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+    // public function updateWithImage(Request $request, $id)
+    // {
+
+    //     try {
+    //         $category = categorie::findOrFail($id);
+    //         // if ($category->userId !== Auth::id()) {
+    //         //     return response()->json(['message' => 'Unauthorized'], 401);
+    //         // }
+    //         if ($request->hasFile('image')) {
+    //             $image = $request->file('image');
+    //             $imageName = time() . '.' . $image->getClientOriginalExtension();
+    //             $image->move(public_path('/images'), $imageName);
+    //         }
+    //         $category->update([
+    //             'categoryname' => $request->categoryname,
+    //             'budget' => $request->budget,
+    //             'image' => 'images/' . $imageName,
+    //         ]);
+
+    //         return response()->json(['message' => 'Category updated successfully', 'category' => $category], 201);
+    //     } catch (ValidationException $e) {
+    //         return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['message' => 'Failed to update category', 'error' => $e->getMessage()], 500);
+    //     }
+    // }
     public function updateWithImage(Request $request, $id)
     {
+        $cate = Categorie::findOrFail($id);
 
-        try {
-            $category = categorie::findOrFail($id);
-            // if ($category->userId !== Auth::id()) {
-            //     return response()->json(['message' => 'Unauthorized'], 401);
-            // }
+        if (auth()->check()) {
+
+            
+            $validator = Validator::make($request->all(), [
+                'categoryname' => 'required|string',
+                // 'type' => 'required|in:imcome,expense',
+            ]);
+            
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('/images'), $imageName);
+                $image->move(public_path('images'), $imageName);
+                $cate->image = 'images/' . $imageName;
             }
-            $category->update([
-                'categoryname' => $request->categoryname,
-                'budget' => $request->budget,
-                'image' => 'images/' . $imageName,
-            ]);
-
-            return response()->json(['message' => 'Category updated successfully', 'category' => $category], 201);
-        } catch (ValidationException $e) {
-            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to update category', 'error' => $e->getMessage()], 500);
+            
+        
+            $cate->categoryname = $request->categoryname;
+            $cate->type = $request->type;
+            $cate->budget = $request->budget;
+            $cate->save();
+            
+            return response()->json(['message' => 'Category edited successfully', 'category' => $cate], 201);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
     }
 

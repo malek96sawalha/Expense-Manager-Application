@@ -44,8 +44,8 @@ export default function () {
       Setemail("");
       Setpassword("");
 
-      localStorage.setItem("token", response.data.token);
-
+      localStorage.setItem("token", csrfToken);
+      
       dispatch(userdata(response.data.user));
       window.location.href = "/";
       // navigate("/");
